@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>3_제어문과 서브프로그램</title>
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+  </head>
+  <body> .job 프로그램의 명령문들은 위에서 아래로의 순서로 한 행씩 수행됩니다. 하지만, 어떤 조건에 따라 명령문들을 수행하지 않고
+    건너뛰거나, 특정한 명령문들을 여러 번 반복해서 수행할 수도 있습니다. 이렇게 프로그램의 흐름을 제어할 수 있는 제어문에 대해서
+    알아봅시다.<br>
+    <br>
+    <h2>3.1. 주소 (Address)</h2>
+    <p>순서대로 다음 행을 수행하지 않고 프로그램의 다른 위치로 이동하는 것을 분기(branch)라고 합니다. 주소란 분기의
+      목적지(destination) 입니다.</p>
+    주소를 정의하는 방법은 행번호와 레이블의 2가지입니다. 아래의 예에서 두 번째 명령문의10은 행번호이고, 마지막 명령문
+    *err_handle은 레이블입니다.<br>
+    <p><br>
+    </p>
+    <p><br>
+    </p>
+    <div class="codebox"> move P,po3,spd=80%,accu=1,tool=3 until do33<br>
+      10 z_pos = (base_height+offset)*1.05<br>
+      # robot has to wait sensor2 input<br>
+      *err_handle<br>
+    </div>
+    <br>
+    <br>
+     <br>
+    <h2>3.2. 정지, 대기문</h2>
+    프로그램의 실행을 정지시키거나, 일정 시간동안, 혹은 조건이 만족할 때까지 대기시킬 수 있습니다.<br>
+    <br>
+    <h3>3.2.1. stop문</h3>
+    <table>
+      <tbody>
+        <tr>
+          <td>설명&nbsp;&nbsp;&nbsp; </td>
+          <td>프로그램을 정지시킵니다. 재기동하면 다음 행부터 계속 수행합니다.</td>
+        </tr>
+        <tr>
+          <td>문법&nbsp;&nbsp;&nbsp; </td>
+          <td>stop</td>
+        </tr>
+        <tr>
+          <td>사용 예</td>
+          <td>if di9<br>
+            stop<br>
+            endif</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h3>3.2.2. end문</h3>
+    <table>
+      <tbody>
+        <tr>
+          <td>설명&nbsp;&nbsp;&nbsp; </td>
+          <td>프로그램을 정지시킵니다. 연속 재생모드이거나 재기동하면 주 프로그램의 처음부터 다시 수행합니다.</td>
+        </tr>
+        <tr>
+          <td>문법&nbsp;&nbsp;&nbsp; </td>
+          <td>end</td>
+        </tr>
+        <tr>
+          <td>사용 예</td>
+          <td>move p,spd=70%,accu=1,tool=0<br>
+            move p,spd=70%,accu=1,tool=0<br>
+            end</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h3>3.2.3. delay문</h3>
+    설명&nbsp;&nbsp; &nbsp;지정한 시간 동안 대기한 후 다음 명령문으로 진행합니다.<br>
+    문법&nbsp;&nbsp; &nbsp;delay &lt;시간&gt;<br>
+    파라미터&nbsp;&nbsp; &nbsp;시간&nbsp;&nbsp; &nbsp;대기할 시간&nbsp;&nbsp; &nbsp;산술식<br>
+    0.1~60.0 sec<br>
+    사용 예&nbsp;&nbsp; &nbsp;delay 3.5<br>
+    <br>
+     <br>
+    <br>
+    3.2.4. wait문<br>
+    설명&nbsp;&nbsp; &nbsp;지정한 조건이 참이 될 때까지 대기한 후 다음 명령문으로 진행합니다.<br>
+    문법&nbsp;&nbsp; &nbsp;wait &lt;조건&gt;[,&lt;제한시간&gt;,&lt;timeout 주소&gt;]<br>
+    파라미터&nbsp;&nbsp; &nbsp;조건&nbsp;&nbsp; &nbsp;대기할 조건&nbsp;&nbsp; &nbsp;조건식<br>
+    &nbsp;&nbsp; &nbsp;제한시간&nbsp;&nbsp; &nbsp;조건이 거짓일 경우 대기할 최대 제한 시간
+    (timeout)&nbsp;&nbsp; &nbsp;산술식<br>
+    0.1~60.0 sec<br>
+    &nbsp;&nbsp; &nbsp;timeout 주소&nbsp;&nbsp; &nbsp;제한시간 초과 시, 분기할
+    주소&nbsp;&nbsp; &nbsp;주소<br>
+    사용 예&nbsp;&nbsp; &nbsp;wait sensor_ok<br>
+    wait (sensor_ok and pos_ok),10,*timeout<br>
+    <br>
+    <br>
+    <h2>3.3. 분기문</h2>
+    조건없이 다른 주소로 분기합니다.<br>
+    <h3>3.3.1. goto문</h3>
+    설명&nbsp;&nbsp; &nbsp;지정한 주소로 분기합니다.<br>
+    문법&nbsp;&nbsp; &nbsp;goto &lt;주소&gt;<br>
+    파라미터&nbsp;&nbsp; &nbsp;주소&nbsp;&nbsp; &nbsp;분기할 주소<br>
+    행 번호인 경우 산술식도 가능<br>
+    사용 예&nbsp;&nbsp; &nbsp;goto 99<br>
+    goto addr<br>
+    goto *err_hdl<br>
+    <br>
+     <br>
+    <br>
+   
+    <h2>3.4. 조건문</h2>
+    <p>조건에 따라 특정한 동작을 수행하거나 수행하지 않을 수 있습니다.</p>
+    <h3> 3.4.1. 단문 if문</h3>
+    <p> 단문 if문의 형태는 다음과 같습니다. &lt;bool 표현식&gt;이 true이면 &lt;주소&gt;로 분기하고, false이면
+      분기하지 않고 다음 명령문으로 넘어갑니다.<br>
+    </p>
+    <div class="codebox">if &lt;bool 표현식&gt; then &lt;주소&gt; </div>
+    아래는 단문 if의 사용 예입니다. pressure 가 limit보다 크다는 조건이 true인 경우, 레이블 주소인 *err로 분기해서
+    압력이 너무 높다는 경고를 print합니다. false이면, 분기하지 않고 다음 명령문을 차례로 수행하기 때문에, ' 정상 동작 중.'을
+    출력하고 프로그램을 끝냅니다.<br>
+    <div class="codebox"> var pressure=95, limit=90<br>
+      if pressure &gt; limit then *err<br>
+      print "정상 동작 중."<br>
+      end<br>
+      *err<br>
+      print "경고: 압력이 너무 높습니다." </div>
+
+
+      <h3>3.4.2. 복문 if~endif문</h3>
+      단문 if는 참일 경우 특정 주소로 분기하는 동작 밖에는 못합니다. 그 외의 동작, 혹은 여러 개의 명령문을 수행해야 한다면 복문
+      if문을 사용해야 합니다. <br>
+      형태는 다음과 같습니다. &lt;bool 표현식&gt;이 true이면 if ~ endif 사이의 &lt;명령문&gt;들을 순서대로
+      수행합니다. false이면 &lt;명령문&gt;들을 수행하지 않고 endif 다음 위치로 건너뜁니다.<br>
+      <div class="codebox"> if &lt;bool 표현식&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        endif<br>
+      </div>
+      아래의 예에서 pressure가 limit보다 크면, 그 아래의 대입문과 print 문을 수행하지만, 그렇지 않으면 수행하지 않고
+      end로 분기합니다. <br>
+      <div class="codebox"> var pressure=95, limit=90, exceed<br>
+        if pressure &gt; limit<br>
+        &nbsp;&nbsp;&nbsp; exceed = pressure - limit<br>
+        &nbsp;&nbsp;&nbsp; print "경고: 압력이 너무 높습니다."<br>
+        endif<br>
+        end<br>
+      </div>
+      예제 프로그램을 보면 if와 endif 사이의 명령문들이 2칸 정도 들여쓰기 되어 있습니다. 이 명령문들이 if~ endif 사이에
+      내포된(nested) 한 블록(block)의 코드임을 쉽게 알아볼 수 있도록 들여쓰기를 한 것입니다.<br>
+      <br>
+      <h3>3.4.3. 복문 if~else~endif문</h3>
+      false일 경우 수행할 명령문들도 있는 경우에는 아래의 형태를 사용합니다.<br>
+      표현식이 true이면 명령문 A들을 수행하고, false이면 명령문 B들을 수행합니다.<br>
+      <div class="codebox"> if &lt;bool 표현식&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 A&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        else<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 B&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        endif<br>
+      </div>
+      <p><br>
+      </p>
+      <p>사용 예는 아래와 같습니다. </p>
+      <div class="codebox"> var pressure=95, limit=90, exceed<br>
+        if pressure &gt; limit<br>
+        &nbsp;&nbsp;&nbsp; exceed = pressure - limit<br>
+        &nbsp;&nbsp;&nbsp; print "경고: 압력이 너무 높습니다."<br>
+        else<br>
+        &nbsp;&nbsp;&nbsp; print "정상 동작 중."<br>
+        endif<br>
+        end<br>
+      </div>
+      <br>
+      <h3>3.4.4. 복문 if~elseif~else~endif문</h3>
+      조건이 여러 개일 경우에는 아래와 같은 형태로 elseif문을 사용할 수 있습니다.<br>
+      <div class="codebox"> if &lt;bool 표현식&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 A&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        elseif &lt;bool 표현식&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 B&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        elseif &lt;bool 표현식&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 C&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        else<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 N&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        endif<br>
+      </div>
+      <br>
+      <p> 사용 예는 아래와 같습니다.</p>
+      <div class="codebox"> var pressure=95, limit_h=90, limit_m=80<br>
+        if pressure &gt; limit_h<br>
+        &nbsp;&nbsp;&nbsp; print "경고: 압력이 매우 높습니다."<br>
+        elseif pressure &gt; limit_m<br>
+        &nbsp;&nbsp;&nbsp; print "알림: 압력이 높습니다.."<br>
+        else<br>
+        &nbsp;&nbsp;&nbsp; print "정상 동작 중."<br>
+        endif<br>
+        end<br>
+      </div>
+      <br>
+      <h3>3.4.5. switch~case~break~end_switch문</h3>
+      <p> switch 문은 수식을 평가하여 case문으로 지정한 수식을 평가한 값과 비교합니다. 값이 일치하는 case문부터 break
+        문을 만날 때까지 수행합니다. </p>
+      <p> 예를 들어, 아래에서 표현식 X의 결과값이 표현식 B1이나 B2의 결과값와 같다면, (1) ~ (3)이 수행한 후
+        end_switch 문 지점으로 이동합니다. (명령문 B 밑에 break가 없는 점을 유의하십시오.) X의 값이 C와 같을 때는
+        (2) ~ (3)이 수행됩니다. </p>
+      만일, X의 값이 어떤 case 문의 값과도 일치하지 않으면, default로 이동하여 (4) ~ (5)가 수행됩니다. default
+      구간은 없어도 됩니다.<br>
+      <div class="codebox"> switch &lt;표현식X&gt;<br>
+        case &lt;표현식A&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 A&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        &nbsp;&nbsp;&nbsp; break<br>
+        case &lt;표현식B1&gt;<br>
+        case &lt;표현식B2&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 B&gt;&nbsp;&nbsp;&nbsp; … (1)<br>
+        case &lt;표현식C&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 C&gt;&nbsp;&nbsp;&nbsp; … (2)<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        &nbsp;&nbsp;&nbsp; break&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; … (3)<br>
+        default<br>
+        &nbsp;&nbsp;&nbsp; &lt;명령문 N&gt;&nbsp;&nbsp;&nbsp; … (4)<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        &nbsp;&nbsp;&nbsp; break&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; … (5)<br>
+        end_switch<br>
+      </div>
+      <p> 표현식은 결과가 bool, 숫자, 문자열인 상수, 변수, 수식이 모두 가능합니다.<br>
+        사용 예는 아래와 같습니다.<br>
+      </p>
+      <div class="codebox">  &nbsp;&nbsp; var state="timeout"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; var res=0<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; <br>
+        &nbsp;&nbsp;&nbsp;&nbsp; switch state<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; case "ok"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res=11<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; case "timeout"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; case "timeover"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res=33<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; case "invalid"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res=55<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; case "fault"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res=77<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; default<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res=99<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; end_switch<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; <br>
+        &nbsp; 99 end<br>
+      </div>
+    
+    
+    
+
+  </body>
+</html>
